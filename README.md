@@ -17,3 +17,5 @@ samples, guidance on mobile development, and a full API reference.
 
 Ubuntu deployment
 https://codebeaker.medium.com/install-flutter-without-android-studio-on-ubuntu-a14a66a88f9f
+
+VBoxManage modifyvm vm-name --nested-hw-virt on
