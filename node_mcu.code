@@ -1,0 +1,86 @@
+/Importing of Header File/
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+
+
+/*Defining of Constants */
+#define Current      D0
+#define Voltage      D1
+#define Fan          D2
+#define Lamp         D3
+#define Trigger      D4
+#define Echo         D5
+#define Temperature  D6
+#define WaterPump    D7
+#define Ldr      D8
+
+/FireBase RealTime DataBase Setup/
+
+#define FIREBASE_HOST "homeautomation-79647-default-rtdb.firebaseio.com"
+#define FIREBASE_AUTH "PAcQHnXsnP17rmTzCWMlkJ3m5ojAir8fVkXqKQQM"
+
+/Wifi Connection Credentials/
+
+#define WIFI_SSID "Jp"
+#define WIFI_PASSWORD "Prasad66"
+String FanStatus;
+String LampStatus;
+String WaterPumpStatus;
+String TemperatureStatus;
+int TemperatureData =0;
+void setup() {
+Serial.begin(115200);
+/Wifi Connection Verfication/
+WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+Serial.print("connecting");
+while (WiFi.status() != WL_CONNECTED){
+Serial.print(".");
+delay(500);
+}
+Serial.println();
+Serial.print("connected: ");
+Serial.println(WiFi.localIP());
+/Firebase Initialisation/
+Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+/I/P Pin Configuration/
+pinMode(Current, INPUT);
+pinMode(Voltage, INPUT);
+pinMode(Ldr, INPUT);
+pinMode(Fan, OUTPUT);
+pinMode(Lamp, OUTPUT);
+pinMode(Trigger, OUTPUT);
+pinMode(Echo, INPUT);
+pinMode(Temperature, INPUT);
+pinMode(WaterPump, OUTPUT);
+}
+void loop() {
+FanStatus=Firebase.getString("FAN");
+LampStatus=Firebase.getString("LAMP");
+WaterPumpStatus=Firebase.getString("WaterPump");
+TemperatureData = analogRead(Temperature);
+TemperatureStatus =String(TemperatureData);
+Firebase.setString("Room Temperature",TemperatureStatus);
+Firebase.setString("Voltage",TemperatureStatus);
+Firebase.setString("Water Level",TemperatureStatus);
+Serial.println("Fan"+FanStatus);
+Serial.println("Lamp"+LampStatus);
+Serial.println("WaterPump"+WaterPumpStatus);
+if (FanStatus=="ON"){
+digitalWrite(Fan,HIGH);
+Serial.println("Fan is On");
+}
+else
+Serial.println("Fan is Off");
+if(LampStatus=="ON"){
+digitalWrite(Lamp,HIGH);
+Serial.println("Lamp is On");
+}
+else
+Serial.println("Lamp is Off");
+if(WaterPumpStatus=="ON"){
+digitalWrite(WaterPump,HIGH);
+Serial.println("WaterPump is On");
+}
+else
+Serial.println("WaterPump is Off");
+delay(1000);
